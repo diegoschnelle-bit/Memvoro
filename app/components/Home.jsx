@@ -288,7 +288,16 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
                 const share = leader ? Math.max(4, (p[valueKey] / leader[valueKey]) * 100) : 0;
                 const aboveTotal = i === 0 ? leader[valueKey] : rest[i - 1][valueKey];
                 return (
-                  <li key={p.id} className="relative overflow-hidden py-5">
+                  <li key={p.id} className="group relative overflow-visible py-5">
+                    {/* Floating "claim this rank" pill — shows on hover over the
+                        whole row, positioned over the divider above it, like
+                        outbid.lol's rank-claim prompt. */}
+                    <button
+                      onClick={() => { setModalTarget(p); setModalAboveTotal(aboveTotal); }}
+                      className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-volt px-3 py-1 text-xs font-bold text-ink opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100"
+                    >
+                      claim this rank for ${costToOvertake(aboveTotal, p, valueKey).toLocaleString("en-US")}
+                    </button>
                     <div
                       className="absolute inset-y-0 left-0 bg-cream/[0.03]"
                       style={{ width: `${share}%` }}
@@ -301,7 +310,7 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
                         </span>
                         <ProfileLink
                           project={p}
-                          className="group flex items-center gap-4 rounded -m-1 p-1 transition-colors hover:bg-cream/[0.04]"
+                          className="flex items-center gap-4 rounded -m-1 p-1 transition-colors group-hover:bg-cream/[0.04]"
                         >
                           <Logo project={p} size={44} />
                           <div>
@@ -330,14 +339,9 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
                         </span>
                         <button
                           onClick={() => { setModalTarget(p); setModalAboveTotal(aboveTotal); }}
-                          className="group relative w-24 overflow-hidden rounded border border-cream/20 py-1.5 text-xs font-medium hover:border-volt hover:text-volt"
+                          className="rounded border border-cream/20 px-3 py-1.5 text-xs font-medium hover:border-volt hover:text-volt"
                         >
-                          <span className="block transition-transform duration-150 group-hover:-translate-y-full">
-                            Outbid
-                          </span>
-                          <span className="absolute inset-0 flex translate-y-full items-center justify-center font-mono transition-transform duration-150 group-hover:translate-y-0">
-                            ${costToOvertake(aboveTotal, p, valueKey).toLocaleString("en-US")}
-                          </span>
+                          Outbid
                         </button>
                       </div>
                     </div>
