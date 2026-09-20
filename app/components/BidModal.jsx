@@ -79,7 +79,7 @@ export default function BidModal({
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/80 sm:items-center">
       <div className="w-full max-w-md rounded-t-2xl border border-cream/10 bg-char p-6 sm:rounded-2xl">
         <div className="flex items-start justify-between">
-          <h3 className="font-display text-lg font-bold">
+          <h3 className="font-display text-lg font-semibold">
             {isNew ? "List your project" : `Outbid ${target.name}`}
           </h3>
           <button
@@ -215,7 +215,7 @@ export default function BidModal({
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-volt py-3 font-display text-sm font-bold uppercase tracking-wide text-ink disabled:opacity-60"
+            className="w-full rounded-full bg-volt py-3 font-display text-sm font-semibold uppercase tracking-wide text-ink disabled:opacity-60"
           >
             {loading ? "Redirecting to checkout…" : "Continue to payment"}
           </button>

@@ -47,7 +47,7 @@ function Logo({ project, size = 56 }) {
   }
   return (
     <div
-      className="flex shrink-0 items-center justify-center rounded-full bg-char font-display font-bold text-cream/80 ring-1 ring-cream/10"
+      className="flex shrink-0 items-center justify-center rounded-full bg-char font-display font-semibold text-cream/80 ring-1 ring-cream/10"
       style={{ width: size, height: size, fontSize: size * 0.32 }}
     >
       {initials(project.name)}
@@ -111,14 +111,14 @@ function LiveTicker({ activity, stats }) {
       a.tookLead ? (
         <span key={a.id} className="inline-flex items-center gap-2 whitespace-nowrap px-5">
           <span>👑</span>
-          <span className="font-display font-bold text-cream">{a.projectName}</span>
+          <span className="font-display font-semibold text-cream">{a.projectName}</span>
           <span className="text-bone">took #1</span>
           <span className="text-bone/60">{timeAgo(a.createdAt)}</span>
         </span>
       ) : (
         <span key={a.id} className="inline-flex items-center gap-2 whitespace-nowrap px-5">
           <span>🔥</span>
-          <span className="font-display font-bold text-cream">{a.projectName}</span>
+          <span className="font-display font-semibold text-cream">{a.projectName}</span>
           <span className="text-bone">added</span>
           <span className="font-display font-semibold text-volt">{money(a.amount)}</span>
           <span className="text-bone/60">{timeAgo(a.createdAt)}</span>
@@ -141,7 +141,7 @@ function LiveTicker({ activity, stats }) {
 
   return (
     <div className="marquee-group flex items-center gap-3 overflow-hidden border-y border-cream/10 bg-char py-2 text-sm">
-      <span className="ml-4 flex shrink-0 items-center gap-1.5 whitespace-nowrap font-display text-xs font-bold uppercase tracking-wide text-volt">
+      <span className="ml-4 flex shrink-0 items-center gap-1.5 whitespace-nowrap font-display text-xs font-semibold uppercase tracking-wide text-volt">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-volt" />
         Live
       </span>
@@ -158,7 +158,7 @@ function LiveTicker({ activity, stats }) {
 function StatBox({ label, value }) {
   return (
     <div className="px-4 text-center">
-      <div className="font-display text-2xl font-bold text-volt sm:text-3xl">{value}</div>
+      <div className="font-display text-2xl font-semibold text-volt sm:text-3xl">{value}</div>
       <div className="mt-1 text-xs uppercase tracking-wide text-bone">{label}</div>
     </div>
   );
@@ -169,7 +169,7 @@ function StatBox({ label, value }) {
 function MiniRanking({ title, accent, projects, valueKey }) {
   return (
     <div className="rounded-xl border border-cream/10 bg-char p-4 shadow-sm">
-      <div className={`mb-3 flex items-center gap-1.5 font-display text-xs font-bold uppercase tracking-wide ${"text-volt"}`}>
+      <div className={`mb-3 flex items-center gap-1.5 font-display text-xs font-semibold uppercase tracking-wide ${"text-volt"}`}>
         <span className={`h-1.5 w-1.5 rounded-full ${"bg-volt"}`} />
         {title}
       </div>
@@ -244,20 +244,20 @@ export default function Home({
       <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6">
         <div className="flex items-center gap-2">
           <Crown className="h-6 w-6 text-volt" />
-          <span className="font-display text-lg font-bold tracking-tight">Memvoro</span>
+          <span className="font-display text-lg font-semibold tracking-tight">Memvoro</span>
         </div>
         <nav className="flex items-center gap-6">
-          <span className="font-display text-xs font-bold uppercase tracking-wide text-volt">Battle</span>
-          <a href="#hall-of-fame" className="font-display text-xs font-bold uppercase tracking-wide text-bone hover:text-cream">
+          <span className="font-display text-xs font-semibold uppercase tracking-wide text-volt">Battle</span>
+          <a href="#hall-of-fame" className="font-display text-xs font-semibold uppercase tracking-wide text-bone hover:text-cream">
             Hall of Fame
           </a>
-          <a href="/rules" className="font-display text-xs font-bold uppercase tracking-wide text-bone hover:text-cream">
+          <a href="/rules" className="font-display text-xs font-semibold uppercase tracking-wide text-bone hover:text-cream">
             How it works
           </a>
         </nav>
         <button
           onClick={() => openBid("new")}
-          className="rounded-full bg-volt px-5 py-2.5 font-display text-xs font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
+          className="rounded-full bg-volt px-5 py-2.5 font-display text-xs font-semibold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
         >
           List your coin →
         </button>
@@ -270,13 +270,13 @@ export default function Home({
         <div className="flex rounded-full border border-cream/15 p-1 text-sm">
           <button
             onClick={() => setTab("all")}
-            className={`rounded-full px-4 py-1.5 font-display font-bold transition-colors ${tab === "all" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
+            className={`rounded-full px-4 py-1.5 font-display font-semibold transition-colors ${tab === "all" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
           >
             All-Time
           </button>
           <button
             onClick={() => setTab("today")}
-            className={`rounded-full px-4 py-1.5 font-display font-bold transition-colors ${tab === "today" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
+            className={`rounded-full px-4 py-1.5 font-display font-semibold transition-colors ${tab === "today" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
           >
             Today
           </button>
@@ -291,7 +291,7 @@ export default function Home({
       {/* Claim hero */}
       <section className="mx-auto max-w-3xl px-6 py-10 text-center">
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <span className="font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
+          <span className="font-display text-3xl font-semibold uppercase tracking-tight sm:text-4xl">
             {leader ? `Claim #1 for` : `Claim #1 to start for`}
           </span>
           <span className="flex items-center gap-2">
@@ -301,7 +301,7 @@ export default function Home({
             >
               −
             </button>
-            <span className={`font-display text-3xl font-bold sm:text-4xl ${"text-volt"}`}>
+            <span className={`font-display text-3xl font-semibold sm:text-4xl ${"text-volt"}`}>
               {money(claimAmount)}
             </span>
             <button
@@ -325,7 +325,7 @@ export default function Home({
           />
           <button
             type="submit"
-            className="shrink-0 rounded-full bg-volt px-7 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
+            className="shrink-0 rounded-full bg-volt px-7 py-3 font-display text-sm font-semibold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
           >
             Claim rank
           </button>
@@ -357,7 +357,7 @@ export default function Home({
                     {!isLeader && (
                       <button
                         onClick={() => openBid(p, aboveTotal)}
-                        className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-volt px-3 py-1 font-display text-xs font-bold text-ink opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100"
+                        className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-volt px-3 py-1 font-display text-xs font-semibold text-ink opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100"
                       >
                         ${costToOvertake(aboveTotal, p, valueKey)} {claimLabel(aboveRank)} ↑
                       </button>
@@ -369,7 +369,7 @@ export default function Home({
                       <Logo project={p} size={44} />
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="truncate font-display text-sm font-bold">{p.name}</span>
+                          <span className="truncate font-display text-sm font-semibold">{p.name}</span>
                           {p.ticker && <span className="shrink-0 font-mono text-xs text-bone">{p.ticker}</span>}
                           {isLeader && (
                             <Crown className={`h-3.5 w-3.5 shrink-0 ${"text-volt"}`} filled />
@@ -383,7 +383,7 @@ export default function Home({
                       {p.clicks > 0 && (
                         <span className="hidden font-mono text-xs text-bone sm:inline">{p.clicks} clicks</span>
                       )}
-                      <span className={`font-display text-sm font-bold ${isLeader ? "text-volt" : "text-cream"}`}>
+                      <span className={`font-display text-sm font-semibold ${isLeader ? "text-volt" : "text-cream"}`}>
                         {money(p[valueKey])}
                       </span>
                     </div>
@@ -406,7 +406,7 @@ export default function Home({
 
       {/* Live activity */}
       <section className="mx-auto max-w-6xl px-6 pb-10">
-        <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wide text-bone">
+        <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-semibold uppercase tracking-wide text-bone">
           <span className="h-2 w-2 rounded-full bg-volt" />
           Live Activity
         </h2>
@@ -437,7 +437,7 @@ export default function Home({
       {/* Hall of Fame */}
       {hallOfFame && hallOfFame.length > 0 && (
         <section id="hall-of-fame" className="mx-auto max-w-6xl px-6 pb-10">
-          <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-wide text-bone">Hall of Fame</h2>
+          <h2 className="mb-4 font-display text-sm font-semibold uppercase tracking-wide text-bone">Hall of Fame</h2>
           <div className="space-y-3">
             {hallOfFame.map(({ date, top3 }) => (
               <div key={date} className="flex flex-wrap items-center gap-4 border-b border-cream/10 pb-3 text-sm">
@@ -475,7 +475,7 @@ export default function Home({
           <div className="flex items-center gap-2">
             <Crown className="h-5 w-5 text-volt" />
             <div>
-              <div className="font-display text-sm font-bold">Memvoro</div>
+              <div className="font-display text-sm font-semibold">Memvoro</div>
               <div className="text-xs text-bone">Outbid. Take #1.</div>
             </div>
           </div>

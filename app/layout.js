@@ -1,10 +1,11 @@
-import { Fredoka } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
-// Headlines, big names, primary CTAs — the rounded, friendly "claim" voice.
-const display = Fredoka({
+// Headlines, big names, primary CTAs — geometric, friendly, but not as
+// heavy/cartoonish as Fredoka. Closer to the outbid.lol reference.
+const display = Poppins({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
   variable: "--font-display",
