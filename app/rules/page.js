@@ -20,7 +20,7 @@ export default function RulesPage() {
       <header className="mx-auto flex max-w-3xl items-center justify-between px-6 py-7">
         <Link href="/" className="flex items-center gap-2">
           <Crown className="h-6 w-6 text-volt" />
-          <span className="text-lg font-bold tracking-tight">Memvoro</span>
+          <span className="font-display text-lg font-bold tracking-tight">Memvoro</span>
         </Link>
         <Link
           href="/"
@@ -31,7 +31,7 @@ export default function RulesPage() {
       </header>
 
       <section className="mx-auto max-w-3xl px-6 pb-32 pt-6">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <h1 className="font-display text-4xl font-bold uppercase tracking-tighter sm:text-5xl">
           Rules
         </h1>
         <p className="mt-4 text-bone">

@@ -25,7 +25,7 @@ export default async function AboutPage() {
       <header className="mx-auto flex max-w-3xl items-center justify-between px-6 py-7">
         <Link href="/" className="flex items-center gap-2">
           <Crown className="h-6 w-6 text-volt" />
-          <span className="text-lg font-bold tracking-tight">Memvoro</span>
+          <span className="font-display text-lg font-bold tracking-tight">Memvoro</span>
         </Link>
         <Link
           href="/"
@@ -36,7 +36,7 @@ export default async function AboutPage() {
       </header>
 
       <section className="mx-auto max-w-3xl px-6 pb-8 pt-6">
-        <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+        <h1 className="font-display text-4xl font-bold leading-tight tracking-tighter sm:text-5xl">
           The internet doesn't vote.
           <br />
           It pays.
@@ -123,9 +123,9 @@ export default async function AboutPage() {
           </p>
           <Link
             href="/"
-            className="mt-4 inline-block rounded bg-volt px-6 py-3 font-mono text-sm font-bold text-ink transition-transform hover:scale-[1.02]"
+            className="mt-4 inline-block rounded bg-volt px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
           >
-            Enter the arena
+            Take #1
           </Link>
         </div>
       </section>
