@@ -1,12 +1,12 @@
-import { Space_Grotesk } from "next/font/google";
+import { Fredoka } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
-// Headlines, big names, primary CTAs — the "poster" voice.
-const display = Space_Grotesk({
+// Headlines, big names, primary CTAs — the rounded, friendly "claim" voice.
+const display = Fredoka({
   subsets: ["latin"],
-  weight: ["500", "700"],
+  weight: ["500", "600", "700"],
   variable: "--font-display",
 });
 
