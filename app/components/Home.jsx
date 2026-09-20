@@ -8,6 +8,17 @@ function money(n) {
   return `$${Math.round(n).toLocaleString("en-US")}`;
 }
 
+function timeAgo(iso) {
+  const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
 function initials(name) {
   return name
     .split(" ")
@@ -121,7 +132,7 @@ function HallOfFame({ entries }) {
   if (!entries || entries.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 pb-32">
+    <section className="mx-auto max-w-6xl px-6 pb-16">
       <h2 className="mb-6 text-lg font-bold text-bone">Hall of Fame</h2>
       <div className="space-y-3">
         {entries.map(({ date, top3 }) => (
@@ -150,7 +161,83 @@ function HallOfFame({ entries }) {
   );
 }
 
-export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
+function LatestActivity({ items }) {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <section className="mx-auto max-w-6xl px-6 pb-16">
+      <h2 className="mb-6 flex items-center gap-2 text-lg font-bold text-bone">
+        <span className="h-2 w-2 rounded-full bg-volt" />
+        Latest activity
+      </h2>
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((a) => (
+          <div
+            key={a.id}
+            className="flex items-center justify-between rounded border border-cream/10 bg-char px-4 py-3 text-sm"
+          >
+            <div>
+              <span className="font-medium">{a.projectName}</span>
+              {a.ticker && (
+                <span className="ml-1.5 font-mono text-xs text-bone">
+                  {a.ticker}
+                </span>
+              )}
+              <span className="ml-1.5 text-bone">bid</span>
+              <span className="ml-1.5 font-mono text-volt">
+                {money(a.amount)}
+              </span>
+            </div>
+            <span className="shrink-0 text-xs text-bone">
+              {timeAgo(a.createdAt)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function StatsStrip({ stats }) {
+  if (!stats) return null;
+
+  const items = [
+    { label: "memecoins competing", value: stats.projectCount.toLocaleString("en-US") },
+    { label: "total ever bid", value: money(stats.totalPot) },
+    { label: "bids placed", value: stats.bidCount.toLocaleString("en-US") },
+    { label: "biggest single bid", value: money(stats.biggestBidAmount) },
+  ];
+
+  return (
+    <section className="mx-auto max-w-6xl px-6 pb-32">
+      <div className="grid grid-cols-2 gap-4 rounded-lg border border-cream/10 bg-char p-6 sm:grid-cols-4">
+        {items.map((s) => (
+          <div key={s.label} className="text-center">
+            <div className="font-mono text-xl font-bold text-volt sm:text-2xl">
+              {s.value}
+            </div>
+            <div className="mt-1 text-xs text-bone">{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-6 text-center text-sm text-bone">
+        Every one of them started at #{stats.projectCount > 0 ? "the bottom" : "1"}.{" "}
+        <a href="/about" className="text-volt hover:underline">
+          See why projects bid
+        </a>
+        .
+      </p>
+    </section>
+  );
+}
+
+export default function Home({
+  allTimeProjects,
+  todayProjects,
+  hallOfFame,
+  recentActivity,
+  stats,
+}) {
   const [tab, setTab] = useState("all"); // "all" | "today"
   const [modalTarget, setModalTarget] = useState(null); // null | "new" | project
   const [modalAboveTotal, setModalAboveTotal] = useState(null);
@@ -169,12 +256,20 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
           <Crown className="h-6 w-6 text-volt" />
           <span className="text-lg font-bold tracking-tight">Memvoro</span>
         </div>
-        <button
-          onClick={() => { setModalTarget("new"); setModalAboveTotal(null); }}
-          className="rounded border border-cream/20 px-4 py-2 text-sm font-medium text-cream/90 transition-colors hover:border-volt hover:text-volt"
-        >
-          List your project
-        </button>
+        <div className="flex items-center gap-5">
+          <a href="/about" className="text-sm font-medium text-bone hover:text-volt">
+            About
+          </a>
+          <a href="/rules" className="text-sm font-medium text-bone hover:text-volt">
+            Rules
+          </a>
+          <button
+            onClick={() => { setModalTarget("new"); setModalAboveTotal(null); }}
+            className="rounded border border-cream/20 px-4 py-2 text-sm font-medium text-cream/90 transition-colors hover:border-volt hover:text-volt"
+          >
+            List your project
+          </button>
+        </div>
       </header>
 
       {active.length > 0 && <Ticker projects={active} valueKey={valueKey} />}
@@ -354,6 +449,8 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
       </section>
 
       <HallOfFame entries={hallOfFame} />
+      <LatestActivity items={recentActivity} />
+      <StatsStrip stats={stats} />
 
       {modalTarget && (
         <BidModal
