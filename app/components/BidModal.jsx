@@ -24,6 +24,7 @@ export default function BidModal({ target, aboveTotal, valueField = "totalBid", 
   const [ticker, setTicker] = useState("");
   const [description, setDescription] = useState("");
   const [projectUrl, setProjectUrl] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -52,6 +53,7 @@ export default function BidModal({ target, aboveTotal, valueField = "totalBid", 
           ticker: isNew ? ticker : target.ticker,
           description: isNew ? description : target.description,
           projectUrl: isNew ? projectUrl : target.projectUrl,
+          logoUrl: isNew ? logoUrl : target.logoUrl,
         }),
       });
       const data = await res.json();
@@ -121,6 +123,34 @@ export default function BidModal({ target, aboveTotal, valueField = "totalBid", 
                   className="mt-1 w-full rounded border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
                   placeholder="https://..."
                 />
+              </div>
+              <div>
+                <label className="text-xs text-bone">
+                  Logo URL (optional) — link to a square image
+                </label>
+                <div className="mt-1 flex items-center gap-3">
+                  <input
+                    value={logoUrl}
+                    onChange={(e) => setLogoUrl(e.target.value)}
+                    className="w-full rounded border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
+                    placeholder="https://.../logo.png"
+                  />
+                  {logoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={logoUrl}
+                      alt="Logo preview"
+                      className="h-9 w-9 shrink-0 rounded-full bg-ink object-cover ring-1 ring-cream/20"
+                      onError={(e) => { e.currentTarget.style.visibility = "hidden"; }}
+                      onLoad={(e) => { e.currentTarget.style.visibility = "visible"; }}
+                    />
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-bone">
+                  No file upload yet — paste a link to an image already
+                  hosted somewhere (Twitter/X profile pic, Imgur, your
+                  site).
+                </p>
               </div>
             </>
           )}
