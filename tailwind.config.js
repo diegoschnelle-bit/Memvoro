@@ -7,14 +7,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ink: "#09090B",        // fondo negro base
-        char: "#29292E",       // superficie secundaria (dark gray)
-        cream: "#F7F7F5",      // texto / fondos claros
-        bone: "#92929A",       // texto secundario (secondary gray)
-        volt: "#F5FF3B",       // amarillo neón - #1 / money / CTA
-        gold: "#FFC94A",       // acento cálido - trono / corona
-        riot: "#B14EFF",       // violeta - acento del modo "Today"
-        rust: "#C24C2E",       // estados de error / caída de rango
+        ink: "#FFFFFF",        // fondo blanco base
+        char: "#F6F1E9",       // superficie secundaria (crema cálido claro)
+        cream: "#1C1917",      // texto principal (oscuro)
+        bone: "#78716C",       // texto secundario (gris cálido)
+        volt: "#D97757",       // naranja/terracota Claude - #1 / money / CTA
+        gold: "#B45309",       // ámbar cálido - Hall of Fame
+        rust: "#DC2626",       // estados de error
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],

@@ -169,8 +169,8 @@ function StatBox({ label, value }) {
 function MiniRanking({ title, accent, projects, valueKey }) {
   return (
     <div className="rounded-xl border border-cream/10 bg-char p-4">
-      <div className={`mb-3 flex items-center gap-1.5 font-display text-xs font-bold uppercase tracking-wide ${accent === "riot" ? "text-riot" : "text-gold"}`}>
-        <span className={`h-1.5 w-1.5 rounded-full ${accent === "riot" ? "bg-riot" : "bg-gold"}`} />
+      <div className={`mb-3 flex items-center gap-1.5 font-display text-xs font-bold uppercase tracking-wide ${"text-volt"}`}>
+        <span className={`h-1.5 w-1.5 rounded-full ${"bg-volt"}`} />
         {title}
       </div>
       {projects.length === 0 ? (
@@ -214,7 +214,7 @@ export default function Home({
   const valueKey = tab === "today" ? "todayBid" : "totalBid";
   const active = tab === "today" ? todayProjects : allTimeProjects;
   const other = tab === "today" ? allTimeProjects : todayProjects;
-  const accent = tab === "today" ? "riot" : "gold";
+  // single accent color used throughout (Claude orange)
   const [leader] = active;
 
   const minToClaim = leader ? leader[valueKey] + 1 : 1;
@@ -270,13 +270,13 @@ export default function Home({
         <div className="flex rounded border border-cream/15 p-1 text-sm">
           <button
             onClick={() => setTab("all")}
-            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "all" ? "bg-gold text-ink" : "text-bone hover:text-cream"}`}
+            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "all" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
           >
             All-Time
           </button>
           <button
             onClick={() => setTab("today")}
-            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "today" ? "bg-riot text-cream" : "text-bone hover:text-cream"}`}
+            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "today" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
           >
             Today
           </button>
@@ -301,7 +301,7 @@ export default function Home({
             >
               −
             </button>
-            <span className={`font-mono text-3xl font-bold sm:text-4xl ${accent === "riot" ? "text-riot" : "text-gold"}`}>
+            <span className={`font-mono text-3xl font-bold sm:text-4xl ${"text-volt"}`}>
               {money(claimAmount)}
             </span>
             <button
@@ -351,7 +351,7 @@ export default function Home({
                   <div
                     key={p.id}
                     className={`group relative flex items-center justify-between gap-4 overflow-visible rounded-xl px-4 py-4 ${
-                      isLeader ? (accent === "riot" ? "bg-riot/10" : "bg-gold/10") : "bg-char"
+                      isLeader ? "bg-volt/10" : "bg-char"
                     }`}
                   >
                     {!isLeader && (
@@ -372,7 +372,7 @@ export default function Home({
                           <span className="truncate font-display text-sm font-bold">{p.name}</span>
                           {p.ticker && <span className="shrink-0 font-mono text-xs text-bone">{p.ticker}</span>}
                           {isLeader && (
-                            <Crown className={`h-3.5 w-3.5 shrink-0 ${accent === "riot" ? "text-riot" : "text-gold"}`} filled />
+                            <Crown className={`h-3.5 w-3.5 shrink-0 ${"text-volt"}`} filled />
                           )}
                         </div>
                         <p className="truncate text-xs text-bone">{p.description}</p>
@@ -383,7 +383,7 @@ export default function Home({
                       {p.clicks > 0 && (
                         <span className="hidden font-mono text-xs text-bone sm:inline">{p.clicks} clicks</span>
                       )}
-                      <span className={`font-mono text-sm font-bold ${isLeader ? (accent === "riot" ? "text-riot" : "text-gold") : "text-cream"}`}>
+                      <span className={`font-mono text-sm font-bold ${isLeader ? "text-volt" : "text-cream"}`}>
                         {money(p[valueKey])}
                       </span>
                     </div>
@@ -397,7 +397,7 @@ export default function Home({
         <div className="space-y-4">
           <MiniRanking
             title={tab === "today" ? "All-time ranking" : "Today's ranking"}
-            accent={tab === "today" ? "gold" : "riot"}
+            accent="volt"
             projects={other}
             valueKey={tab === "today" ? "totalBid" : "todayBid"}
           />
@@ -419,7 +419,7 @@ export default function Home({
                 <div className="min-w-0">
                   <span className="font-display font-semibold">{a.projectName}</span>
                   {a.tookLead ? (
-                    <span className="ml-1.5 text-gold">took #1 👑</span>
+                    <span className="ml-1.5 text-volt">took #1 👑</span>
                   ) : (
                     <>
                       <span className="ml-1.5 text-bone">added</span>
