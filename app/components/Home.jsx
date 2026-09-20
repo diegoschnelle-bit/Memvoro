@@ -120,7 +120,7 @@ function LiveTicker({ activity, stats }) {
           <span>🔥</span>
           <span className="font-display font-bold text-cream">{a.projectName}</span>
           <span className="text-bone">added</span>
-          <span className="font-mono text-volt">{money(a.amount)}</span>
+          <span className="font-display font-semibold text-volt">{money(a.amount)}</span>
           <span className="text-bone/60">{timeAgo(a.createdAt)}</span>
         </span>
       )
@@ -132,7 +132,7 @@ function LiveTicker({ activity, stats }) {
       <span key="biggest" className="inline-flex items-center gap-2 whitespace-nowrap px-5">
         <span>💰</span>
         <span className="text-bone">Biggest bid ever:</span>
-        <span className="font-mono text-volt">{money(stats.biggestBidAmount)}</span>
+        <span className="font-display font-semibold text-volt">{money(stats.biggestBidAmount)}</span>
       </span>
     );
   }
@@ -158,7 +158,7 @@ function LiveTicker({ activity, stats }) {
 function StatBox({ label, value }) {
   return (
     <div className="px-4 text-center">
-      <div className="font-mono text-2xl font-bold text-volt sm:text-3xl">{value}</div>
+      <div className="font-display text-2xl font-bold text-volt sm:text-3xl">{value}</div>
       <div className="mt-1 text-xs uppercase tracking-wide text-bone">{label}</div>
     </div>
   );
@@ -188,7 +188,7 @@ function MiniRanking({ title, accent, projects, valueKey }) {
                 <Logo project={p} size={22} />
                 <span className="truncate">{p.name}</span>
               </span>
-              <span className="shrink-0 font-mono text-xs text-volt">{money(p[valueKey])}</span>
+              <span className="shrink-0 font-display text-xs font-semibold text-volt">{money(p[valueKey])}</span>
             </ProfileLink>
           ))}
         </div>
@@ -301,7 +301,7 @@ export default function Home({
             >
               −
             </button>
-            <span className={`font-mono text-3xl font-bold sm:text-4xl ${"text-volt"}`}>
+            <span className={`font-display text-3xl font-bold sm:text-4xl ${"text-volt"}`}>
               {money(claimAmount)}
             </span>
             <button
@@ -383,7 +383,7 @@ export default function Home({
                       {p.clicks > 0 && (
                         <span className="hidden font-mono text-xs text-bone sm:inline">{p.clicks} clicks</span>
                       )}
-                      <span className={`font-mono text-sm font-bold ${isLeader ? "text-volt" : "text-cream"}`}>
+                      <span className={`font-display text-sm font-bold ${isLeader ? "text-volt" : "text-cream"}`}>
                         {money(p[valueKey])}
                       </span>
                     </div>
@@ -423,7 +423,7 @@ export default function Home({
                   ) : (
                     <>
                       <span className="ml-1.5 text-bone">added</span>
-                      <span className="ml-1.5 font-mono text-volt">{money(a.amount)}</span>
+                      <span className="ml-1.5 font-display font-semibold text-volt">{money(a.amount)}</span>
                     </>
                   )}
                 </div>
@@ -447,7 +447,7 @@ export default function Home({
                     <span key={p.id} className="inline-flex items-center gap-1.5">
                       <span className="text-bone">{["🥇", "🥈", "🥉"][i]}</span>
                       <span className="font-display font-medium">{p.name}</span>
-                      <span className="font-mono text-xs text-volt">{money(p.total)}</span>
+                      <span className="font-display text-xs font-semibold text-volt">{money(p.total)}</span>
                     </span>
                   ))}
                 </div>
