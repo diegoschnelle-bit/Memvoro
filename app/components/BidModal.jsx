@@ -5,21 +5,21 @@ import { useState } from "react";
 const MIN_BID = 1;
 const QUICK_AMOUNTS = [1, 5, 25, 100];
 
-// Like outbid.lol: if you're not already #1, you don't have to out-earn
-// the leader's entire total to take the spot — just beat it by $1 on top
-// of what you've already got in. Cheaper to reclaim than a fresh bid,
-// which is what keeps people coming back to fight over the spot.
-function suggestedAmount(target, leaderTotal, currentValue) {
+// Like outbid.lol: you don't have to out-earn the whole leaderboard to
+// move up — just beat whoever's directly above you by $1. Cheaper than
+// aiming straight for #1, and it's what keeps people fighting one rung
+// of the ladder at a time instead of giving up after one loss.
+function suggestedAmount(target, aboveTotal, currentValue) {
   if (target === "new") return QUICK_AMOUNTS[1];
-  if (!leaderTotal || currentValue >= leaderTotal) return MIN_BID;
-  return Math.max(MIN_BID, leaderTotal - currentValue + 1);
+  if (aboveTotal == null || currentValue >= aboveTotal) return MIN_BID;
+  return Math.max(MIN_BID, aboveTotal - currentValue + 1);
 }
 
-export default function BidModal({ target, leaderTotal, valueField = "totalBid", onClose }) {
+export default function BidModal({ target, aboveTotal, valueField = "totalBid", onClose }) {
   const isNew = target === "new";
   const currentValue = isNew ? 0 : target[valueField] ?? target.totalBid ?? 0;
-  const toRetake = !isNew && leaderTotal && currentValue < leaderTotal;
-  const [amount, setAmount] = useState(suggestedAmount(target, leaderTotal, currentValue));
+  const toRetake = !isNew && aboveTotal != null && currentValue < aboveTotal;
+  const [amount, setAmount] = useState(suggestedAmount(target, aboveTotal, currentValue));
   const [name, setName] = useState("");
   const [ticker, setTicker] = useState("");
   const [description, setDescription] = useState("");
@@ -136,12 +136,12 @@ export default function BidModal({ target, leaderTotal, valueField = "totalBid",
                 <>
                   Bid{" "}
                   <span className="font-mono text-volt">
-                    ${suggestedAmount(target, leaderTotal, currentValue).toLocaleString("en-US")}
+                    ${suggestedAmount(target, aboveTotal, currentValue).toLocaleString("en-US")}
                   </span>{" "}
-                  or more to take #1.
+                  or more to move up a spot.
                 </>
               ) : (
-                "Bid higher to take the spot."
+                "Bid higher to add to your total."
               )}
             </p>
           )}

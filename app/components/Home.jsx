@@ -44,18 +44,24 @@ function Logo({ project, size = 56 }) {
   );
 }
 
-function ClickableName({ project, children, className }) {
-  if (!project.projectUrl) return <span className={className}>{children}</span>;
+function ProfileLink({ project, children, className }) {
+  const Tag = project.projectUrl ? "a" : "div";
+  const linkProps = project.projectUrl
+    ? { href: `/go/${project.id}`, target: "_blank", rel: "noopener noreferrer" }
+    : {};
   return (
-    <a
-      href={`/go/${project.id}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={className}
-    >
+    <Tag {...linkProps} className={className}>
       {children}
-    </a>
+    </Tag>
   );
+}
+
+// Whole-dollar minimum to move above whichever row currently sits right
+// above this one — shown on hover so the price is clear before opening
+// the modal. Cheaper than aiming straight for #1: it's just enough to
+// leapfrog your nearest rival, one rung of the ladder at a time.
+function costToOvertake(aboveTotal, project, valueKey) {
+  return Math.max(1, Math.round(aboveTotal - project[valueKey]) + 1);
 }
 
 function Ticker({ projects, valueKey }) {
@@ -147,6 +153,7 @@ function HallOfFame({ entries }) {
 export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
   const [tab, setTab] = useState("all"); // "all" | "today"
   const [modalTarget, setModalTarget] = useState(null); // null | "new" | project
+  const [modalAboveTotal, setModalAboveTotal] = useState(null);
   const countdown = useCountdownToMidnightUTC();
 
   const valueKey = tab === "today" ? "todayBid" : "totalBid";
@@ -163,7 +170,7 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
           <span className="text-lg font-bold tracking-tight">Memvoro</span>
         </div>
         <button
-          onClick={() => setModalTarget("new")}
+          onClick={() => { setModalTarget("new"); setModalAboveTotal(null); }}
           className="rounded border border-cream/20 px-4 py-2 text-sm font-medium text-cream/90 transition-colors hover:border-volt hover:text-volt"
         >
           List your project
@@ -186,7 +193,7 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
           </p>
           <div className="mt-9 flex items-center gap-6">
             <button
-              onClick={() => setModalTarget("new")}
+              onClick={() => { setModalTarget("new"); setModalAboveTotal(null); }}
               className="rounded bg-volt px-6 py-3 font-mono text-sm font-bold text-ink transition-transform hover:scale-[1.02]"
             >
               Enter the arena
@@ -206,29 +213,32 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
               <Crown className="h-3.5 w-3.5" filled />
               Currently #1{tab === "today" ? " today" : ""}
             </div>
-            <div className="mt-3 flex items-center gap-4">
+            <ProfileLink
+              project={leader}
+              className="group mt-3 flex items-center gap-4 rounded -m-1 p-1 transition-colors hover:bg-cream/[0.04]"
+            >
               <Logo project={leader} size={56} />
               <div>
-                <ClickableName project={leader} className="text-xl font-bold hover:text-volt">
+                <div className="text-xl font-bold group-hover:text-volt">
                   {leader.name}
-                </ClickableName>
+                </div>
                 {leader.ticker && (
                   <div className="font-mono text-xs text-bone">
                     {leader.ticker}
                   </div>
                 )}
               </div>
-            </div>
+            </ProfileLink>
             <p className="mt-4 text-sm text-bone">{leader.description}</p>
             <div className="mt-5 flex items-end justify-between">
               <div className="font-mono text-2xl font-bold text-gold">
                 {money(leader[valueKey])}
               </div>
               <button
-                onClick={() => setModalTarget(leader)}
+                onClick={() => { setModalTarget(leader); setModalAboveTotal(leader[valueKey]); }}
                 className="text-xs font-medium text-bone underline decoration-cream/30 underline-offset-4 hover:text-volt"
               >
-                Take this spot
+                Add funds — ${costToOvertake(leader[valueKey], leader, valueKey).toLocaleString("en-US")}
               </button>
             </div>
             <div className="mt-2 text-xs text-bone">
@@ -276,6 +286,7 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
             <ol className="divide-y divide-cream/10 border-y border-cream/10">
               {rest.map((p, i) => {
                 const share = leader ? Math.max(4, (p[valueKey] / leader[valueKey]) * 100) : 0;
+                const aboveTotal = i === 0 ? leader[valueKey] : rest[i - 1][valueKey];
                 return (
                   <li key={p.id} className="relative overflow-hidden py-5">
                     <div
@@ -288,22 +299,27 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
                         <span className="w-6 shrink-0 font-mono text-sm text-bone">
                           {i + 2}
                         </span>
-                        <Logo project={p} size={44} />
-                        <div>
-                          <div className="flex items-baseline gap-2">
-                            <ClickableName project={p} className="font-semibold hover:text-volt">
-                              {p.name}
-                            </ClickableName>
-                            {p.ticker && (
-                              <span className="font-mono text-xs text-bone">
-                                {p.ticker}
+                        <ProfileLink
+                          project={p}
+                          className="group flex items-center gap-4 rounded -m-1 p-1 transition-colors hover:bg-cream/[0.04]"
+                        >
+                          <Logo project={p} size={44} />
+                          <div>
+                            <div className="flex items-baseline gap-2">
+                              <span className="font-semibold group-hover:text-volt">
+                                {p.name}
                               </span>
-                            )}
+                              {p.ticker && (
+                                <span className="font-mono text-xs text-bone">
+                                  {p.ticker}
+                                </span>
+                              )}
+                            </div>
+                            <p className="max-w-md text-sm text-bone">
+                              {p.description}
+                            </p>
                           </div>
-                          <p className="max-w-md text-sm text-bone">
-                            {p.description}
-                          </p>
-                        </div>
+                        </ProfileLink>
                       </div>
                       <div className="flex shrink-0 items-center gap-5">
                         <span className="hidden font-mono text-xs text-bone sm:inline">
@@ -313,10 +329,15 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
                           {money(p[valueKey])}
                         </span>
                         <button
-                          onClick={() => setModalTarget(p)}
-                          className="rounded border border-cream/20 px-3 py-1.5 text-xs font-medium hover:border-volt hover:text-volt"
+                          onClick={() => { setModalTarget(p); setModalAboveTotal(aboveTotal); }}
+                          className="group relative w-24 overflow-hidden rounded border border-cream/20 py-1.5 text-xs font-medium hover:border-volt hover:text-volt"
                         >
-                          Outbid
+                          <span className="block transition-transform duration-150 group-hover:-translate-y-full">
+                            Outbid
+                          </span>
+                          <span className="absolute inset-0 flex translate-y-full items-center justify-center font-mono transition-transform duration-150 group-hover:translate-y-0">
+                            ${costToOvertake(aboveTotal, p, valueKey).toLocaleString("en-US")}
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -333,9 +354,9 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
       {modalTarget && (
         <BidModal
           target={modalTarget}
-          leaderTotal={leader?.[valueKey]}
+          aboveTotal={modalAboveTotal}
           valueField={valueKey}
-          onClose={() => setModalTarget(null)}
+          onClose={() => { setModalTarget(null); setModalAboveTotal(null); }}
         />
       )}
     </main>
