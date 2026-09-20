@@ -343,8 +343,16 @@ export default function Home({
           </div>
         </div>
 
-        {/* Sidebar: countdown + current king */}
+        {/* Sidebar: mascot + countdown + current king */}
         <div className="space-y-4">
+          <div className="flex justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/mascot-crown.png"
+              alt="Memvoro crown mascot"
+              className="h-auto w-40 drop-shadow-[0_0_30px_rgba(245,255,59,0.25)] sm:w-48"
+            />
+          </div>
           {tab === "today" && (
             <div className="rounded-xl border border-cream/10 bg-char p-5 text-center">
               <div className="font-display text-xs font-bold uppercase tracking-wide text-bone">
@@ -594,7 +602,12 @@ export default function Home({
 
         {/* Promo banner */}
         <div className="flex flex-col items-center justify-center rounded-xl border border-cream/10 bg-gradient-to-b from-char to-ink p-8 text-center">
-          <Crown className="h-10 w-10 text-volt" filled />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/mascot-crown.png"
+            alt="Memvoro crown mascot"
+            className="h-auto w-28 drop-shadow-[0_0_25px_rgba(245,255,59,0.25)]"
+          />
           <div className="mt-4 font-display text-2xl font-bold uppercase leading-tight">
             Memes compete.
             <br />
