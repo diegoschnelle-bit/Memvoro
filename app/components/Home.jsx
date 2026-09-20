@@ -157,7 +157,7 @@ function LiveTicker({ activity, stats }) {
 
 function StatBox({ label, value }) {
   return (
-    <div className="text-center">
+    <div className="px-4 text-center">
       <div className="font-mono text-2xl font-bold text-volt sm:text-3xl">{value}</div>
       <div className="mt-1 text-xs uppercase tracking-wide text-bone">{label}</div>
     </div>
@@ -168,7 +168,7 @@ function StatBox({ label, value }) {
 // tab ISN'T currently the main list.
 function MiniRanking({ title, accent, projects, valueKey }) {
   return (
-    <div className="rounded-xl border border-cream/10 bg-char p-4">
+    <div className="rounded-xl border border-cream/10 bg-char p-4 shadow-sm">
       <div className={`mb-3 flex items-center gap-1.5 font-display text-xs font-bold uppercase tracking-wide ${"text-volt"}`}>
         <span className={`h-1.5 w-1.5 rounded-full ${"bg-volt"}`} />
         {title}
@@ -239,7 +239,7 @@ export default function Home({
   const looksLikeUrl = /^https?:\/\//i.test(claimQuery.trim());
 
   return (
-    <main className="min-h-screen bg-grid">
+    <main className="min-h-screen bg-ink">
       {/* Header */}
       <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6">
         <div className="flex items-center gap-2">
@@ -336,7 +336,7 @@ export default function Home({
       <section className="mx-auto grid max-w-6xl gap-6 px-6 pb-10 lg:grid-cols-[1fr_300px]">
         <div>
           {active.length === 0 ? (
-            <p className="rounded-xl border border-cream/10 bg-char px-6 py-14 text-center text-sm text-bone">
+            <p className="rounded-xl border border-cream/10 bg-char px-6 py-14 text-center text-sm text-bone shadow-sm">
               {tab === "today"
                 ? "Nobody's bid today yet — the first one in takes #1."
                 : "The leaderboard starts here — be the first name on the board."}
@@ -351,7 +351,7 @@ export default function Home({
                   <div
                     key={p.id}
                     className={`group relative flex items-center justify-between gap-4 overflow-visible rounded-xl px-4 py-4 ${
-                      isLeader ? "bg-volt/10" : "bg-char"
+                      isLeader ? "bg-volt/10 shadow-sm" : "bg-char shadow-sm"
                     }`}
                   >
                     {!isLeader && (
@@ -415,7 +415,7 @@ export default function Home({
         ) : (
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {recentActivity.slice(0, 6).map((a) => (
-              <div key={a.id} className="flex items-center justify-between rounded border border-cream/10 bg-char px-4 py-2.5 text-sm">
+              <div key={a.id} className="flex items-center justify-between rounded border border-cream/10 bg-char px-4 py-2.5 text-sm shadow-sm">
                 <div className="min-w-0">
                   <span className="font-display font-semibold">{a.projectName}</span>
                   {a.tookLead ? (
@@ -461,7 +461,7 @@ export default function Home({
       {stats && (
         <section className="mx-auto max-w-6xl px-6 pb-16">
           <p className="mb-4 text-center text-sm text-bone">Some stats about Memvoro</p>
-          <div className="grid grid-cols-3 gap-4 rounded-xl border border-cream/10 bg-char p-6">
+          <div className="grid grid-cols-3 gap-4 divide-x divide-cream/10 rounded-xl border border-cream/10 bg-char py-6 shadow-sm">
             <StatBox label="Projects" value={stats.projectCount.toLocaleString("en-US")} />
             <StatBox label="Total Bids" value={money(stats.totalPot)} />
             <StatBox label="Biggest Bid" value={money(stats.biggestBidAmount)} />

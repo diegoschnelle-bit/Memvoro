@@ -16,7 +16,7 @@ function Rule({ title, children }) {
 
 export default function RulesPage() {
   return (
-    <main className="min-h-screen bg-grid">
+    <main className="min-h-screen bg-ink">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-6 py-7">
         <Link href="/" className="flex items-center gap-2">
           <Crown className="h-6 w-6 text-volt" />
