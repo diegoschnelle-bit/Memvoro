@@ -502,6 +502,34 @@ export default function Home({
             </div>
           </div>
         )}
+
+        {!leader && (
+          <div
+            className={`flex w-full flex-col items-center justify-center rounded-xl border border-dashed p-8 text-center lg:w-96 ${
+              tab === "today" ? "border-riot/30" : "border-gold/30"
+            }`}
+          >
+            <Crown
+              className={`h-12 w-12 ${tab === "today" ? "text-riot/40" : "text-gold/40"}`}
+            />
+            <div className="mt-4 font-display text-xl font-bold">
+              The throne is empty
+            </div>
+            <p className="mt-2 text-sm text-bone">
+              {tab === "today"
+                ? "Nobody's bid today yet. First one in takes #1."
+                : "No projects yet. Be the very first name on the board."}
+            </p>
+            <button
+              onClick={() => { setModalTarget("new"); setModalAboveTotal(null); }}
+              className={`mt-6 rounded px-6 py-3 font-display text-sm font-bold uppercase tracking-wide transition-transform hover:scale-[1.02] ${
+                tab === "today" ? "bg-riot text-cream" : "bg-gold text-ink"
+              }`}
+            >
+              Take #1 for $1
+            </button>
+          </div>
+        )}
       </section>
 
       <BattleAlert
@@ -544,22 +572,11 @@ export default function Home({
       {/* Leaderboard */}
       <section className="mx-auto max-w-6xl px-6 pb-20 pt-6">
         {active.length === 0 ? (
-          <div className="rounded-xl border border-riot/30 bg-gradient-to-b from-char to-ink px-6 py-16 text-center">
-            <Crown className="mx-auto h-10 w-10 text-riot" />
-            <h3 className="mt-4 font-display text-2xl font-bold uppercase tracking-tight sm:text-3xl">
-              Nobody's claimed today's throne
-            </h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-bone">
-              Today's board resets at midnight UTC. The first bid of the day
-              takes #1 — for as little as $1.
-            </p>
-            <button
-              onClick={() => { setModalTarget("new"); setModalAboveTotal(null); }}
-              className="mt-6 rounded bg-riot px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-cream transition-transform hover:scale-[1.02]"
-            >
-              Take #1
-            </button>
-          </div>
+          <p className="border-y border-cream/10 py-10 text-center text-sm text-bone">
+            {tab === "today"
+              ? "Today's board resets at midnight UTC — the first bid of the day takes #1."
+              : "The leaderboard starts here."}
+          </p>
         ) : (
           rest.length > 0 && (
             <ol className="divide-y divide-cream/10 border-y border-cream/10">
