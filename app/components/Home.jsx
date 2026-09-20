@@ -431,7 +431,8 @@ export default function Home({
                 accent === "riot" ? "border-riot/30" : "border-gold/30"
               }`}
             >
-              <Crown className={`h-10 w-10 ${accent === "riot" ? "text-riot/40" : "text-gold/40"}`} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/mascot-crown-empty.png" alt="" className="h-20 w-auto opacity-80" />
               <div className="mt-3 font-display text-lg font-bold">The throne is empty</div>
               <p className="mt-1 text-sm text-bone">First bid takes #1.</p>
               <button
@@ -472,11 +473,15 @@ export default function Home({
       {/* Leaderboard table */}
       <section className="mx-auto max-w-6xl px-6 py-6">
         {active.length === 0 ? (
-          <p className="border-y border-cream/10 py-10 text-center text-sm text-bone">
-            {tab === "today"
-              ? "Today's board resets at midnight UTC — the first bid of the day takes #1."
-              : "The leaderboard starts here."}
-          </p>
+          <div className="flex flex-col items-center border-y border-cream/10 py-10 text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/mascot-crown-empty.png" alt="" className="h-16 w-auto opacity-60" />
+            <p className="mt-4 text-sm text-bone">
+              {tab === "today"
+                ? "Today's board resets at midnight UTC — the first bid of the day takes #1."
+                : "The leaderboard starts here."}
+            </p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <div className="min-w-[720px]">
@@ -577,7 +582,11 @@ export default function Home({
             Live Activity
           </h2>
           {recentActivity.length === 0 ? (
-            <p className="text-sm text-bone">Nothing yet — be the first.</p>
+            <div className="flex flex-col items-center py-4 text-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/mascot-crown-empty.png" alt="" className="h-12 w-auto opacity-50" />
+              <p className="mt-3 text-sm text-bone">Nothing yet — be the first.</p>
+            </div>
           ) : (
             <div className="space-y-2">
               {recentActivity.slice(0, 6).map((a) => (
