@@ -231,11 +231,9 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
                 Take this spot
               </button>
             </div>
-            {leader.clicks > 0 && (
-              <div className="mt-2 text-xs text-bone">
-                {leader.clicks.toLocaleString("en-US")} clicks sent
-              </div>
-            )}
+            <div className="mt-2 text-xs text-bone">
+              {leader.clicks.toLocaleString("en-US")} clicks sent
+            </div>
           </div>
         )}
       </section>
@@ -308,11 +306,9 @@ export default function Home({ allTimeProjects, todayProjects, hallOfFame }) {
                         </div>
                       </div>
                       <div className="flex shrink-0 items-center gap-5">
-                        {p.clicks > 0 && (
-                          <span className="hidden font-mono text-xs text-bone sm:inline">
-                            {p.clicks.toLocaleString("en-US")} clicks
-                          </span>
-                        )}
+                        <span className="hidden font-mono text-xs text-bone sm:inline">
+                          {p.clicks.toLocaleString("en-US")} clicks
+                        </span>
                         <span className="font-mono text-sm text-cream/90">
                           {money(p[valueKey])}
                         </span>
