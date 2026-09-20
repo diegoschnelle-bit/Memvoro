@@ -448,11 +448,23 @@ export default function Home({
         {leader && (
           <div className="relative w-full max-w-md lg:w-96">
             <div
-              className="absolute -inset-4 rounded-full bg-gold/20 blur-3xl"
+              className={`absolute -inset-4 rounded-full blur-3xl ${
+                tab === "today" ? "bg-riot/20" : "bg-gold/20"
+              }`}
               aria-hidden="true"
             />
-            <div className="relative rounded-xl border border-gold/40 bg-gradient-to-b from-char to-ink p-8 shadow-[0_0_60px_-15px_rgba(255,201,74,0.35)]">
-              <div className="absolute -top-3 left-8 flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 font-display text-xs font-bold uppercase tracking-wide text-gold">
+            <div
+              className={`relative rounded-xl bg-gradient-to-b from-char to-ink p-8 ${
+                tab === "today"
+                  ? "border border-riot/40 shadow-[0_0_60px_-15px_rgba(177,78,255,0.35)]"
+                  : "border border-gold/40 shadow-[0_0_60px_-15px_rgba(255,201,74,0.35)]"
+              }`}
+            >
+              <div
+                className={`absolute -top-3 left-8 flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 font-display text-xs font-bold uppercase tracking-wide ${
+                  tab === "today" ? "text-riot" : "text-gold"
+                }`}
+              >
                 <Crown className="h-3.5 w-3.5" filled />
                 Current King{tab === "today" ? " Today" : ""}
               </div>
@@ -472,7 +484,7 @@ export default function Home({
               </ProfileLink>
               <p className="mt-4 text-sm text-bone">{leader.description}</p>
               <div className="mt-6 flex items-end justify-between">
-                <div className="font-mono text-4xl font-bold text-gold">
+                <div className={`font-mono text-4xl font-bold ${tab === "today" ? "text-riot" : "text-gold"}`}>
                   {money(leader[valueKey])}
                 </div>
                 <button
@@ -483,7 +495,7 @@ export default function Home({
                 </button>
               </div>
               {kingFor && (
-                <div className="mt-2 font-mono text-xs text-gold">
+                <div className={`mt-2 font-mono text-xs ${tab === "today" ? "text-riot" : "text-gold"}`}>
                   King for {kingFor}
                 </div>
               )}
@@ -513,7 +525,7 @@ export default function Home({
           <button
             onClick={() => setTab("today")}
             className={`rounded px-3 py-1.5 font-display font-bold transition-colors ${
-              tab === "today" ? "bg-volt text-ink" : "text-bone hover:text-cream"
+              tab === "today" ? "bg-riot text-cream" : "text-bone hover:text-cream"
             }`}
           >
             Today
@@ -524,7 +536,7 @@ export default function Home({
             <div className="font-display text-xs font-bold uppercase tracking-wide text-bone">
               Today's battle ends in
             </div>
-            <div className="font-mono text-2xl font-bold text-volt">{countdown}</div>
+            <div className="font-mono text-2xl font-bold text-riot">{countdown}</div>
           </div>
         )}
       </div>
@@ -532,9 +544,22 @@ export default function Home({
       {/* Leaderboard */}
       <section className="mx-auto max-w-6xl px-6 pb-20 pt-6">
         {active.length === 0 ? (
-          <p className="border-y border-cream/10 py-10 text-center text-sm text-bone">
-            No bids yet today — be the first and take #1 for as little as $1.
-          </p>
+          <div className="rounded-xl border border-riot/30 bg-gradient-to-b from-char to-ink px-6 py-16 text-center">
+            <Crown className="mx-auto h-10 w-10 text-riot" />
+            <h3 className="mt-4 font-display text-2xl font-bold uppercase tracking-tight sm:text-3xl">
+              Nobody's claimed today's throne
+            </h3>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-bone">
+              Today's board resets at midnight UTC. The first bid of the day
+              takes #1 — for as little as $1.
+            </p>
+            <button
+              onClick={() => { setModalTarget("new"); setModalAboveTotal(null); }}
+              className="mt-6 rounded bg-riot px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-cream transition-transform hover:scale-[1.02]"
+            >
+              Take #1
+            </button>
+          </div>
         ) : (
           rest.length > 0 && (
             <ol className="divide-y divide-cream/10 border-y border-cream/10">
