@@ -15,15 +15,25 @@ function suggestedAmount(target, aboveTotal, currentValue) {
   return Math.max(MIN_BID, aboveTotal - currentValue + 1);
 }
 
-export default function BidModal({ target, aboveTotal, valueField = "totalBid", onClose }) {
+export default function BidModal({
+  target,
+  aboveTotal,
+  valueField = "totalBid",
+  initialAmount,
+  initialName = "",
+  initialProjectUrl = "",
+  onClose,
+}) {
   const isNew = target === "new";
   const currentValue = isNew ? 0 : target[valueField] ?? target.totalBid ?? 0;
   const toRetake = !isNew && aboveTotal != null && currentValue < aboveTotal;
-  const [amount, setAmount] = useState(suggestedAmount(target, aboveTotal, currentValue));
-  const [name, setName] = useState("");
+  const [amount, setAmount] = useState(
+    initialAmount ?? suggestedAmount(target, aboveTotal, currentValue)
+  );
+  const [name, setName] = useState(initialName);
   const [ticker, setTicker] = useState("");
   const [description, setDescription] = useState("");
-  const [projectUrl, setProjectUrl] = useState("");
+  const [projectUrl, setProjectUrl] = useState(initialProjectUrl);
   const [logoUrl, setLogoUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

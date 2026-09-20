@@ -74,69 +74,35 @@ function costToOvertake(aboveTotal, project, valueKey) {
   return Math.max(1, Math.round(aboveTotal - project[valueKey]) + 1);
 }
 
-// "to #1" only reads true when the row directly above really is the
-// leader (i.e. this is the #2 row) — anything deeper says which rank
-// it'd actually land on, so the claim is never misleading.
 function claimLabel(aboveRank) {
   return aboveRank === 1 ? "TO #1" : `TO #${aboveRank}`;
 }
 
-function useDurationSince(sinceIso) {
-  const [label, setLabel] = useState("");
-
-  useEffect(() => {
-    if (!sinceIso) {
-      setLabel("");
-      return;
-    }
-    function tick() {
-      const ms = Date.now() - new Date(sinceIso).getTime();
-      const totalMinutes = Math.max(0, Math.floor(ms / 60000));
-      const h = Math.floor(totalMinutes / 60);
-      const m = totalMinutes % 60;
-      setLabel(h > 0 ? `${h}h ${m}m` : `${m}m`);
-    }
-    tick();
-    const id = setInterval(tick, 30_000);
-    return () => clearInterval(id);
-  }, [sinceIso]);
-
-  return label;
-}
-
 function useCountdownToMidnightUTC() {
-  const [parts, setParts] = useState({ h: "00", m: "00", s: "00" });
+  const [label, setLabel] = useState("");
 
   useEffect(() => {
     function tick() {
       const now = new Date();
       const next = new Date(
-        Date.UTC(
-          now.getUTCFullYear(),
-          now.getUTCMonth(),
-          now.getUTCDate() + 1,
-          0,
-          0,
-          0
-        )
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0)
       );
       const ms = next - now;
-      setParts({
-        h: String(Math.floor(ms / 3_600_000)).padStart(2, "0"),
-        m: String(Math.floor((ms % 3_600_000) / 60_000)).padStart(2, "0"),
-        s: String(Math.floor((ms % 60_000) / 1000)).padStart(2, "0"),
-      });
+      const h = String(Math.floor(ms / 3_600_000)).padStart(2, "0");
+      const m = String(Math.floor((ms % 3_600_000) / 60_000)).padStart(2, "0");
+      const s = String(Math.floor((ms % 60_000) / 1000)).padStart(2, "0");
+      setLabel(`${h}:${m}:${s}`);
     }
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
 
-  return parts;
+  return label;
 }
 
-// A live, data-driven ticker — not a decoration. Every line is built from
-// real bids and the real leadership timeline, never invented.
+// A live, data-driven ticker — every line is built from real bids, never
+// invented.
 function LiveTicker({ activity, stats }) {
   const items = [];
 
@@ -182,69 +148,51 @@ function LiveTicker({ activity, stats }) {
       <div className="overflow-hidden">
         <div className="marquee-track flex w-max">
           <div className="flex">{items}</div>
-          <div className="flex" aria-hidden="true">
-            {items}
-          </div>
+          <div className="flex" aria-hidden="true">{items}</div>
         </div>
       </div>
     </div>
   );
 }
 
-// Only fires on a real, current condition — never a canned message. If
-// nothing qualifies right now, it renders nothing.
-function BattleAlert({ leader, challenger, valueKey, recentActivity }) {
-  if (!leader || !challenger) return null;
-
-  const gap = leader[valueKey] - challenger[valueKey];
-  const gapIsClose = gap > 0 && gap <= Math.max(20, leader[valueKey] * 0.15);
-
-  const justTookLead = recentActivity?.[0]?.tookLead;
-  const justTookLeadRecent =
-    justTookLead &&
-    Date.now() - new Date(recentActivity[0].createdAt).getTime() < 30 * 60_000;
-
-  if (justTookLeadRecent) {
-    return (
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="flex items-center gap-3 rounded-lg border border-gold/40 bg-gold/10 px-5 py-3 text-sm">
-          <span className="text-lg">👑</span>
-          <span>
-            <span className="font-display font-bold">NEW KING —</span>{" "}
-            <span className="font-display font-bold text-gold">
-              {recentActivity[0].projectName}
-            </span>{" "}
-            just took #1.
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  if (gapIsClose) {
-    return (
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="flex items-center gap-3 rounded-lg border border-riot/30 bg-riot/10 px-5 py-3 text-sm">
-          <span className="text-lg">⚔️</span>
-          <span>
-            <span className="font-display font-bold">BATTLE ALERT —</span>{" "}
-            <span className="font-display font-bold">{challenger.name}</span> is only{" "}
-            <span className="font-mono text-riot">{money(gap)}</span> away from{" "}
-            {leader.name}.
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-}
-
 function StatBox({ label, value }) {
   return (
     <div className="text-center">
-      <div className="font-mono text-xl font-bold text-volt sm:text-2xl">{value}</div>
+      <div className="font-mono text-2xl font-bold text-volt sm:text-3xl">{value}</div>
       <div className="mt-1 text-xs uppercase tracking-wide text-bone">{label}</div>
+    </div>
+  );
+}
+
+// Compact top-10 preview of a board, used in the sidebar for whichever
+// tab ISN'T currently the main list.
+function MiniRanking({ title, accent, projects, valueKey }) {
+  return (
+    <div className="rounded-xl border border-cream/10 bg-char p-4">
+      <div className={`mb-3 flex items-center gap-1.5 font-display text-xs font-bold uppercase tracking-wide ${accent === "riot" ? "text-riot" : "text-gold"}`}>
+        <span className={`h-1.5 w-1.5 rounded-full ${accent === "riot" ? "bg-riot" : "bg-gold"}`} />
+        {title}
+      </div>
+      {projects.length === 0 ? (
+        <p className="text-xs text-bone">Nothing yet.</p>
+      ) : (
+        <div className="space-y-2">
+          {projects.slice(0, 10).map((p, i) => (
+            <ProfileLink
+              key={p.id}
+              project={p}
+              className="flex items-center justify-between gap-2 rounded px-1 py-1 text-sm hover:bg-cream/[0.04]"
+            >
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="w-4 shrink-0 font-mono text-xs text-bone">{i + 1}</span>
+                <Logo project={p} size={22} />
+                <span className="truncate">{p.name}</span>
+              </span>
+              <span className="shrink-0 font-mono text-xs text-volt">{money(p[valueKey])}</span>
+            </ProfileLink>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -255,25 +203,40 @@ export default function Home({
   hallOfFame,
   recentActivity,
   stats,
-  throneSince,
 }) {
-  const [tab, setTab] = useState("today"); // "today" | "all"
+  const [tab, setTab] = useState("all"); // which board is the MAIN list: "all" | "today"
   const [modalTarget, setModalTarget] = useState(null); // null | "new" | project
   const [modalAboveTotal, setModalAboveTotal] = useState(null);
+  const [claimAmount, setClaimAmount] = useState(1);
+  const [claimQuery, setClaimQuery] = useState("");
   const countdown = useCountdownToMidnightUTC();
 
   const valueKey = tab === "today" ? "todayBid" : "totalBid";
   const active = tab === "today" ? todayProjects : allTimeProjects;
-  const [leader, ...rest] = active;
+  const other = tab === "today" ? allTimeProjects : todayProjects;
   const accent = tab === "today" ? "riot" : "gold";
-  const kingSince = tab === "today" ? throneSince?.today : throneSince?.all;
-  const kingFor = useDurationSince(kingSince);
-  const [yesterday, ...olderFame] = hallOfFame || [];
+  const [leader] = active;
+
+  const minToClaim = leader ? leader[valueKey] + 1 : 1;
+
+  useEffect(() => {
+    setClaimAmount(minToClaim);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, leader?.id, leader?.[valueKey]]);
 
   function openBid(target, aboveTotal) {
     setModalTarget(target);
     setModalAboveTotal(aboveTotal ?? null);
   }
+
+  function submitClaim(e) {
+    e.preventDefault();
+    if (!claimQuery.trim()) return;
+    setModalTarget("new");
+    setModalAboveTotal(leader ? leader[valueKey] : null);
+  }
+
+  const looksLikeUrl = /^https?:\/\//i.test(claimQuery.trim());
 
   return (
     <main className="min-h-screen bg-grid">
@@ -284,19 +247,11 @@ export default function Home({
           <span className="font-display text-lg font-bold tracking-tight">Memvoro</span>
         </div>
         <nav className="flex items-center gap-6">
-          <span className="font-display text-xs font-bold uppercase tracking-wide text-volt">
-            Battle
-          </span>
-          <a
-            href="#hall-of-fame"
-            className="font-display text-xs font-bold uppercase tracking-wide text-bone hover:text-cream"
-          >
+          <span className="font-display text-xs font-bold uppercase tracking-wide text-volt">Battle</span>
+          <a href="#hall-of-fame" className="font-display text-xs font-bold uppercase tracking-wide text-bone hover:text-cream">
             Hall of Fame
           </a>
-          <a
-            href="/rules"
-            className="font-display text-xs font-bold uppercase tracking-wide text-bone hover:text-cream"
-          >
+          <a href="/rules" className="font-display text-xs font-bold uppercase tracking-wide text-bone hover:text-cream">
             How it works
           </a>
         </nav>
@@ -310,381 +265,181 @@ export default function Home({
 
       <LiveTicker activity={recentActivity} stats={stats} />
 
-      {/* Hero */}
-      <section className="mx-auto grid max-w-6xl gap-8 px-6 py-14 lg:grid-cols-[1fr_320px] lg:items-start">
-        <div className="max-w-xl">
-          <div className="font-display text-xs font-bold uppercase tracking-widest text-bone">
-            The memecoin bidding war.
-          </div>
-          <h1 className="mt-2 font-display text-6xl font-bold uppercase leading-[0.95] tracking-tighter sm:text-7xl">
-            <span className="text-cream">Outbid.</span>
-            <br />
-            <span className="text-volt">Take #1.</span>
-          </h1>
-          <p className="mt-6 text-lg text-bone">
-            Memecoins compete for attention. Highest bid takes the throne.
-          </p>
-          <p className="mt-2 font-mono text-xs uppercase tracking-wide text-bone/60">
-            Paid promotional ranking · not investment advice
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => openBid("new")}
-              className="rounded bg-volt px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
-            >
-              Take the throne →
-            </button>
-            <a
-              href="/rules"
-              className="rounded border border-cream/20 px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-cream hover:border-volt hover:text-volt"
-            >
-              How it works
-            </a>
-          </div>
-        </div>
-
-        {/* Sidebar: mascot + countdown + current king */}
-        <div className="space-y-4">
-          <div className="flex justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/mascot-crown.png"
-              alt="Memvoro crown mascot"
-              className="h-auto w-40 drop-shadow-[0_0_30px_rgba(245,255,59,0.25)] sm:w-48"
-            />
-          </div>
-          {tab === "today" && (
-            <div className="rounded-xl border border-cream/10 bg-char p-5 text-center">
-              <div className="font-display text-xs font-bold uppercase tracking-wide text-bone">
-                Today's battle ends in
-              </div>
-              <div className="mt-2 flex items-center justify-center gap-3 font-mono text-3xl font-bold text-volt">
-                <span>{countdown.h}</span>:<span>{countdown.m}</span>:<span>{countdown.s}</span>
-              </div>
-              <div className="mt-1 flex justify-center gap-8 text-[10px] uppercase tracking-wide text-bone">
-                <span>Hours</span>
-                <span>Minutes</span>
-                <span>Seconds</span>
-              </div>
-            </div>
-          )}
-
-          {leader ? (
-            <div
-              className={`rounded-xl border p-5 ${
-                accent === "riot" ? "border-riot/40 bg-riot/5" : "border-gold/40 bg-gold/5"
-              }`}
-            >
-              <div
-                className={`flex items-center gap-1.5 font-display text-xs font-bold uppercase tracking-wide ${
-                  accent === "riot" ? "text-riot" : "text-gold"
-                }`}
-              >
-                <Crown className="h-3.5 w-3.5" filled />
-                Current King
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <span className={`font-display text-2xl font-bold ${accent === "riot" ? "text-riot" : "text-gold"}`}>
-                  #1
-                </span>
-                <Logo project={leader} size={48} />
-                <div>
-                  <ProfileLink project={leader} className="font-display font-bold hover:text-volt">
-                    {leader.name}
-                  </ProfileLink>
-                  {leader.ticker && (
-                    <div className="font-mono text-xs text-bone">{leader.ticker}</div>
-                  )}
-                </div>
-              </div>
-              <div className={`mt-4 font-mono text-3xl font-bold ${accent === "riot" ? "text-riot" : "text-gold"}`}>
-                {money(leader[valueKey])}
-              </div>
-              {kingFor && (
-                <div className="mt-1 text-xs text-bone">King for {kingFor}</div>
-              )}
-              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-cream/10 pt-3 text-center">
-                <div>
-                  <div className="font-mono text-sm font-bold">{active.length}</div>
-                  <div className="text-[10px] uppercase tracking-wide text-bone">
-                    {tab === "today" ? "in the battle" : "projects"}
-                  </div>
-                </div>
-                <div>
-                  <div className="font-mono text-sm font-bold">{money(leader[valueKey])}</div>
-                  <div className="text-[10px] uppercase tracking-wide text-bone">highest bid</div>
-                </div>
-                <div>
-                  <button
-                    onClick={() => openBid(leader, leader[valueKey])}
-                    className="font-mono text-xs text-bone underline decoration-cream/30 underline-offset-4 hover:text-volt"
-                  >
-                    +${costToOvertake(leader[valueKey], leader, valueKey)}
-                  </button>
-                  <div className="text-[10px] uppercase tracking-wide text-bone">add funds</div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div
-              className={`flex flex-col items-center rounded-xl border border-dashed p-6 text-center ${
-                accent === "riot" ? "border-riot/30" : "border-gold/30"
-              }`}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/mascot-crown-empty.png" alt="" className="h-20 w-auto opacity-80" />
-              <div className="mt-3 font-display text-lg font-bold">The throne is empty</div>
-              <p className="mt-1 text-sm text-bone">First bid takes #1.</p>
-              <button
-                onClick={() => openBid("new")}
-                className={`mt-4 rounded px-5 py-2.5 font-display text-xs font-bold uppercase tracking-wide transition-transform hover:scale-[1.02] ${
-                  accent === "riot" ? "bg-riot text-cream" : "bg-gold text-ink"
-                }`}
-              >
-                Take #1 for $1
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <BattleAlert leader={leader} challenger={rest[0]} valueKey={valueKey} recentActivity={recentActivity} />
-
       {/* Tabs */}
-      <div className="mx-auto mt-8 flex max-w-6xl gap-2 px-6">
-        <button
-          onClick={() => setTab("today")}
-          className={`rounded px-4 py-2 font-display text-xs font-bold uppercase tracking-wide transition-colors ${
-            tab === "today" ? "bg-riot text-cream" : "border border-cream/15 text-bone hover:text-cream"
-          }`}
-        >
-          Live Battle
-        </button>
-        <button
-          onClick={() => setTab("all")}
-          className={`rounded px-4 py-2 font-display text-xs font-bold uppercase tracking-wide transition-colors ${
-            tab === "all" ? "bg-gold text-ink" : "border border-cream/15 text-bone hover:text-cream"
-          }`}
-        >
-          All-Time
-        </button>
+      <div className="mx-auto mt-8 flex max-w-6xl flex-wrap items-center gap-3 px-6">
+        <div className="flex rounded border border-cream/15 p-1 text-sm">
+          <button
+            onClick={() => setTab("all")}
+            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "all" ? "bg-gold text-ink" : "text-bone hover:text-cream"}`}
+          >
+            All-Time
+          </button>
+          <button
+            onClick={() => setTab("today")}
+            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "today" ? "bg-riot text-cream" : "text-bone hover:text-cream"}`}
+          >
+            Today
+          </button>
+        </div>
+        {tab === "today" && (
+          <span className="font-mono text-xs text-bone">
+            Resets every day at midnight UTC · {countdown} left
+          </span>
+        )}
       </div>
 
-      {/* Leaderboard table */}
-      <section className="mx-auto max-w-6xl px-6 py-6">
-        {active.length === 0 ? (
-          <div className="flex flex-col items-center border-y border-cream/10 py-10 text-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/mascot-crown-empty.png" alt="" className="h-16 w-auto opacity-60" />
-            <p className="mt-4 text-sm text-bone">
-              {tab === "today"
-                ? "Today's board resets at midnight UTC — the first bid of the day takes #1."
-                : "The leaderboard starts here."}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <div className="min-w-[720px]">
-              <div className="grid grid-cols-[40px_2fr_2fr_1fr_110px] gap-4 border-b border-cream/10 px-2 pb-3 text-xs uppercase tracking-wide text-bone">
-                <span>#</span>
-                <span>Project</span>
-                <span>Promotional spend</span>
-                <span>To next</span>
-                <span className="text-right">Action</span>
-              </div>
+      {/* Claim hero */}
+      <section className="mx-auto max-w-3xl px-6 py-10 text-center">
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <span className="font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
+            {leader ? `Claim #1 for` : `Claim #1 to start for`}
+          </span>
+          <span className="flex items-center gap-2">
+            <button
+              onClick={() => setClaimAmount((a) => Math.max(minToClaim, a - 1))}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-cream/20 text-bone hover:border-volt hover:text-volt"
+            >
+              −
+            </button>
+            <span className={`font-mono text-3xl font-bold sm:text-4xl ${accent === "riot" ? "text-riot" : "text-gold"}`}>
+              {money(claimAmount)}
+            </span>
+            <button
+              onClick={() => setClaimAmount((a) => a + 1)}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-cream/20 text-bone hover:border-volt hover:text-volt"
+            >
+              +
+            </button>
+          </span>
+        </div>
+        <p className="mt-2 text-xs uppercase tracking-wide text-bone">
+          One leaderboard · no votes · highest bid takes the throne
+        </p>
 
+        <form onSubmit={submitClaim} className="mx-auto mt-6 flex max-w-xl flex-col gap-2 sm:flex-row">
+          <input
+            value={claimQuery}
+            onChange={(e) => setClaimQuery(e.target.value)}
+            placeholder="Your project name or link"
+            className="w-full rounded border border-cream/20 bg-char px-4 py-3 text-sm text-cream outline-none focus:border-volt"
+          />
+          <button
+            type="submit"
+            className="shrink-0 rounded bg-volt px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
+          >
+            Claim rank
+          </button>
+        </form>
+      </section>
+
+      {/* Main list + sidebar */}
+      <section className="mx-auto grid max-w-6xl gap-6 px-6 pb-10 lg:grid-cols-[1fr_300px]">
+        <div>
+          {active.length === 0 ? (
+            <p className="rounded-xl border border-cream/10 bg-char px-6 py-14 text-center text-sm text-bone">
+              {tab === "today"
+                ? "Nobody's bid today yet — the first one in takes #1."
+                : "The leaderboard starts here — be the first name on the board."}
+            </p>
+          ) : (
+            <div className="space-y-2">
               {active.map((p, i) => {
                 const isLeader = i === 0;
-                const aboveTotal = isLeader ? null : i === 1 ? leader[valueKey] : rest[i - 2][valueKey];
-                const aboveRank = i; // rank of the row directly above this one
-                const share = leader ? Math.max(4, (p[valueKey] / leader[valueKey]) * 100) : 0;
-
+                const aboveTotal = isLeader ? null : active[i - 1][valueKey];
+                const aboveRank = i;
                 return (
                   <div
                     key={p.id}
-                    className={`grid grid-cols-[40px_2fr_2fr_1fr_110px] items-center gap-4 rounded px-2 py-4 ${
-                      isLeader
-                        ? accent === "riot"
-                          ? "bg-riot/10"
-                          : "bg-gold/10"
-                        : "border-b border-cream/5"
+                    className={`group relative flex items-center justify-between gap-4 overflow-visible rounded-xl px-4 py-4 ${
+                      isLeader ? (accent === "riot" ? "bg-riot/10" : "bg-gold/10") : "bg-char"
                     }`}
                   >
-                    <span className="font-mono text-sm text-bone">{i + 1}</span>
+                    {!isLeader && (
+                      <button
+                        onClick={() => openBid(p, aboveTotal)}
+                        className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-volt px-3 py-1 font-display text-xs font-bold text-ink opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100"
+                      >
+                        ${costToOvertake(aboveTotal, p, valueKey)} {claimLabel(aboveRank)} ↑
+                      </button>
+                    )}
 
-                    <ProfileLink
-                      project={p}
-                      className="flex items-center gap-3 rounded -m-1 p-1 transition-colors hover:bg-cream/[0.04]"
-                    >
-                      <Logo project={p} size={40} />
+                    <span className="w-6 shrink-0 font-mono text-sm text-bone">{i + 1}</span>
+
+                    <ProfileLink project={p} className="flex min-w-0 flex-1 items-center gap-3">
+                      <Logo project={p} size={44} />
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span className="truncate font-display text-sm font-bold">{p.name}</span>
-                          {isLeader && <Crown className={`h-3.5 w-3.5 shrink-0 ${accent === "riot" ? "text-riot" : "text-gold"}`} filled />}
+                          {p.ticker && <span className="shrink-0 font-mono text-xs text-bone">{p.ticker}</span>}
+                          {isLeader && (
+                            <Crown className={`h-3.5 w-3.5 shrink-0 ${accent === "riot" ? "text-riot" : "text-gold"}`} filled />
+                          )}
                         </div>
-                        {p.ticker && <div className="font-mono text-xs text-bone">{p.ticker}</div>}
+                        <p className="truncate text-xs text-bone">{p.description}</p>
                       </div>
                     </ProfileLink>
 
-                    <div className="flex items-center gap-3">
-                      <div className="h-1.5 w-full max-w-[140px] overflow-hidden rounded-full bg-cream/10">
-                        <div
-                          className={`h-full rounded-full ${isLeader ? (accent === "riot" ? "bg-riot" : "bg-gold") : "bg-cream/40"}`}
-                          style={{ width: `${share}%` }}
-                        />
-                      </div>
-                      <span className="shrink-0 font-mono text-sm">{money(p[valueKey])}</span>
-                    </div>
-
-                    <div className="font-mono text-xs">
-                      {isLeader ? (
-                        <span className="text-bone">—</span>
-                      ) : (
-                        <span className={accent === "riot" ? "text-riot" : "text-gold"}>
-                          ${costToOvertake(aboveTotal, p, valueKey)} {claimLabel(aboveRank)} ↑
-                        </span>
+                    <div className="flex shrink-0 items-center gap-4">
+                      {p.clicks > 0 && (
+                        <span className="hidden font-mono text-xs text-bone sm:inline">{p.clicks} clicks</span>
                       )}
-                    </div>
-
-                    <div className="text-right">
-                      {isLeader ? (
-                        <span
-                          className={`inline-flex items-center gap-1 rounded border px-2.5 py-1.5 font-display text-[10px] font-bold uppercase tracking-wide ${
-                            accent === "riot" ? "border-riot/40 text-riot" : "border-gold/40 text-gold"
-                          }`}
-                        >
-                          <Crown className="h-3 w-3" filled />
-                          King
-                        </span>
-                      ) : (
-                        <button
-                          onClick={() => openBid(p, aboveTotal)}
-                          className="rounded border border-cream/20 px-3 py-1.5 font-display text-[10px] font-bold uppercase tracking-wide hover:border-volt hover:text-volt"
-                        >
-                          Outbid
-                        </button>
-                      )}
+                      <span className={`font-mono text-sm font-bold ${isLeader ? (accent === "riot" ? "text-riot" : "text-gold") : "text-cream"}`}>
+                        {money(p[valueKey])}
+                      </span>
                     </div>
                   </div>
                 );
               })}
             </div>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <MiniRanking
+            title={tab === "today" ? "All-time ranking" : "Today's ranking"}
+            accent={tab === "today" ? "gold" : "riot"}
+            projects={other}
+            valueKey={tab === "today" ? "totalBid" : "todayBid"}
+          />
+        </div>
+      </section>
+
+      {/* Live activity */}
+      <section className="mx-auto max-w-6xl px-6 pb-10">
+        <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wide text-bone">
+          <span className="h-2 w-2 rounded-full bg-volt" />
+          Live Activity
+        </h2>
+        {recentActivity.length === 0 ? (
+          <p className="text-sm text-bone">Nothing yet — be the first.</p>
+        ) : (
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {recentActivity.slice(0, 6).map((a) => (
+              <div key={a.id} className="flex items-center justify-between rounded border border-cream/10 bg-char px-4 py-2.5 text-sm">
+                <div className="min-w-0">
+                  <span className="font-display font-semibold">{a.projectName}</span>
+                  {a.tookLead ? (
+                    <span className="ml-1.5 text-gold">took #1 👑</span>
+                  ) : (
+                    <>
+                      <span className="ml-1.5 text-bone">added</span>
+                      <span className="ml-1.5 font-mono text-volt">{money(a.amount)}</span>
+                    </>
+                  )}
+                </div>
+                <span className="shrink-0 font-mono text-xs text-bone">{timeAgo(a.createdAt)}</span>
+              </div>
+            ))}
           </div>
         )}
       </section>
 
-      {/* Bottom: activity, promo, hall of fame + stats */}
-      <section className="mx-auto grid max-w-6xl gap-6 px-6 py-10 lg:grid-cols-[1.3fr_1fr_1fr]">
-        {/* Live activity */}
-        <div>
-          <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wide text-bone">
-            <span className="h-2 w-2 rounded-full bg-volt" />
-            Live Activity
-          </h2>
-          {recentActivity.length === 0 ? (
-            <div className="flex flex-col items-center py-4 text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/mascot-crown-empty.png" alt="" className="h-12 w-auto opacity-50" />
-              <p className="mt-3 text-sm text-bone">Nothing yet — be the first.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {recentActivity.slice(0, 6).map((a) => (
-                <div key={a.id} className="flex items-center justify-between rounded border border-cream/10 bg-char px-4 py-2.5 text-sm">
-                  <div className="min-w-0">
-                    <span className="font-display font-semibold">{a.projectName}</span>
-                    {a.tookLead ? (
-                      <span className="ml-1.5 text-gold">took #1 👑</span>
-                    ) : (
-                      <>
-                        <span className="ml-1.5 text-bone">added</span>
-                        <span className="ml-1.5 font-mono text-volt">{money(a.amount)}</span>
-                      </>
-                    )}
-                  </div>
-                  <span className="shrink-0 font-mono text-xs text-bone">{timeAgo(a.createdAt)}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Promo banner */}
-        <div className="flex flex-col items-center justify-center rounded-xl border border-cream/10 bg-gradient-to-b from-char to-ink p-8 text-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/mascot-crown.png"
-            alt="Memvoro crown mascot"
-            className="h-auto w-28 drop-shadow-[0_0_25px_rgba(245,255,59,0.25)]"
-          />
-          <div className="mt-4 font-display text-2xl font-bold uppercase leading-tight">
-            Memes compete.
-            <br />
-            <span className="text-volt">Legends remain.</span>
-          </div>
-          <p className="mt-3 text-sm text-bone">Get your coin on the leaderboard.</p>
-          <button
-            onClick={() => openBid("new")}
-            className="mt-5 rounded bg-volt px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
-          >
-            List your coin →
-          </button>
-        </div>
-
-        {/* Yesterday's king + stats */}
-        <div className="space-y-6">
-          {yesterday?.top3?.[0] && (
-            <div className="rounded-xl border border-gold/30 bg-char p-5">
-              <div className="font-display text-xs font-bold uppercase tracking-wide text-gold">
-                Yesterday's King
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <Logo project={yesterday.top3[0]} size={44} />
-                <div>
-                  <div className="font-display font-bold">{yesterday.top3[0].name}</div>
-                  <div className="font-mono text-sm font-bold text-gold">
-                    {money(yesterday.top3[0].total)}
-                  </div>
-                </div>
-              </div>
-              <div className="mt-3 text-xs text-bone">
-                {yesterday.projectsCount} project{yesterday.projectsCount === 1 ? "" : "s"} ·{" "}
-                {yesterday.bidsCount} bid{yesterday.bidsCount === 1 ? "" : "s"}
-                {yesterday.wonBy != null && <> · won by {money(yesterday.wonBy)}</>}
-              </div>
-              <a href="#hall-of-fame" className="mt-3 inline-block text-xs text-bone hover:text-volt">
-                View battle →
-              </a>
-            </div>
-          )}
-
-          {stats && (
-            <div className="rounded-xl border border-cream/10 bg-char p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <span className="font-display text-xs font-bold uppercase tracking-wide text-bone">
-                  Stats (all-time)
-                </span>
-                <a href="/about" className="text-xs text-bone hover:text-volt">
-                  View all →
-                </a>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <StatBox label="projects" value={stats.projectCount.toLocaleString("en-US")} />
-                <StatBox label="total bids" value={money(stats.totalPot)} />
-                <StatBox label="bids placed" value={stats.bidCount.toLocaleString("en-US")} />
-                <StatBox label="biggest bid" value={money(stats.biggestBidAmount)} />
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Hall of Fame (fuller history) */}
-      {olderFame.length > 0 && (
-        <section id="hall-of-fame" className="mx-auto max-w-6xl px-6 pb-16 pt-4">
-          <h2 className="mb-6 font-display text-lg font-bold text-bone">Hall of Fame</h2>
+      {/* Hall of Fame */}
+      {hallOfFame && hallOfFame.length > 0 && (
+        <section id="hall-of-fame" className="mx-auto max-w-6xl px-6 pb-10">
+          <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-wide text-bone">Hall of Fame</h2>
           <div className="space-y-3">
-            {olderFame.map(({ date, top3 }) => (
+            {hallOfFame.map(({ date, top3 }) => (
               <div key={date} className="flex flex-wrap items-center gap-4 border-b border-cream/10 pb-3 text-sm">
                 <span className="w-24 shrink-0 font-mono text-bone">{date}</span>
                 <div className="flex flex-wrap gap-4">
@@ -698,6 +453,18 @@ export default function Home({
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Stats since launch */}
+      {stats && (
+        <section className="mx-auto max-w-6xl px-6 pb-16">
+          <p className="mb-4 text-center text-sm text-bone">Some stats about Memvoro</p>
+          <div className="grid grid-cols-3 gap-4 rounded-xl border border-cream/10 bg-char p-6">
+            <StatBox label="Projects" value={stats.projectCount.toLocaleString("en-US")} />
+            <StatBox label="Total Bids" value={money(stats.totalPot)} />
+            <StatBox label="Biggest Bid" value={money(stats.biggestBidAmount)} />
           </div>
         </section>
       )}
@@ -724,6 +491,9 @@ export default function Home({
           target={modalTarget}
           aboveTotal={modalAboveTotal}
           valueField={valueKey}
+          initialAmount={modalTarget === "new" ? claimAmount : undefined}
+          initialName={modalTarget === "new" && !looksLikeUrl ? claimQuery.trim() : ""}
+          initialProjectUrl={modalTarget === "new" && looksLikeUrl ? claimQuery.trim() : ""}
           onClose={() => openBid(null, null)}
         />
       )}
