@@ -77,7 +77,7 @@ export default function BidModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/80 sm:items-center">
-      <div className="w-full max-w-md rounded-t-lg border border-cream/10 bg-char p-6 sm:rounded-lg">
+      <div className="w-full max-w-md rounded-t-2xl border border-cream/10 bg-char p-6 sm:rounded-2xl">
         <div className="flex items-start justify-between">
           <h3 className="font-display text-lg font-bold">
             {isNew ? "List your project" : `Outbid ${target.name}`}
@@ -99,7 +99,7 @@ export default function BidModal({
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-1 w-full rounded border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
+                  className="mt-1 w-full rounded-xl border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
                   placeholder="DogeKing"
                 />
               </div>
@@ -108,7 +108,7 @@ export default function BidModal({
                 <input
                   value={ticker}
                   onChange={(e) => setTicker(e.target.value)}
-                  className="mt-1 w-full rounded border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
+                  className="mt-1 w-full rounded-xl border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
                   placeholder="$DKING"
                 />
               </div>
@@ -119,7 +119,7 @@ export default function BidModal({
                 <input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="mt-1 w-full rounded border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
+                  className="mt-1 w-full rounded-xl border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
                   placeholder="What makes it worth outbidding for"
                 />
               </div>
@@ -130,7 +130,7 @@ export default function BidModal({
                 <input
                   value={projectUrl}
                   onChange={(e) => setProjectUrl(e.target.value)}
-                  className="mt-1 w-full rounded border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
+                  className="mt-1 w-full rounded-xl border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
                   placeholder="https://..."
                 />
               </div>
@@ -142,7 +142,7 @@ export default function BidModal({
                   <input
                     value={logoUrl}
                     onChange={(e) => setLogoUrl(e.target.value)}
-                    className="w-full rounded border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
+                    className="w-full rounded-xl border border-cream/20 bg-ink px-3 py-2 text-sm text-cream outline-none focus:border-volt"
                     placeholder="https://.../logo.png"
                   />
                   {logoUrl && (
@@ -194,7 +194,7 @@ export default function BidModal({
               step={1}
               value={amount}
               onChange={(e) => setAmount(Math.round(Number(e.target.value)))}
-              className="mt-1 w-full rounded border border-cream/20 bg-ink px-3 py-2 font-mono text-sm text-cream outline-none focus:border-volt"
+              className="mt-1 w-full rounded-xl border border-cream/20 bg-ink px-3 py-2 font-mono text-sm text-cream outline-none focus:border-volt"
             />
             <div className="mt-2 flex gap-2">
               {QUICK_AMOUNTS.map((a) => (
@@ -202,7 +202,7 @@ export default function BidModal({
                   type="button"
                   key={a}
                   onClick={() => setAmount(a)}
-                  className="rounded border border-cream/20 px-2.5 py-1 font-mono text-xs text-bone hover:border-volt hover:text-volt"
+                  className="rounded-full border border-cream/20 px-2.5 py-1 font-mono text-xs text-bone hover:border-volt hover:text-volt"
                 >
                   ${a}
                 </button>
@@ -215,7 +215,7 @@ export default function BidModal({
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-volt py-3 font-display text-sm font-bold uppercase tracking-wide text-ink disabled:opacity-60"
+            className="w-full rounded-full bg-volt py-3 font-display text-sm font-bold uppercase tracking-wide text-ink disabled:opacity-60"
           >
             {loading ? "Redirecting to checkout…" : "Continue to payment"}
           </button>

@@ -20,10 +20,6 @@ module.exports = {
         body: ["var(--font-geist-sans)", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
       },
-      borderRadius: {
-        sm: "3px",
-        DEFAULT: "6px",
-      },
     },
   },
   plugins: [],

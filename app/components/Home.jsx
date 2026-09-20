@@ -257,7 +257,7 @@ export default function Home({
         </nav>
         <button
           onClick={() => openBid("new")}
-          className="rounded bg-volt px-4 py-2 font-display text-xs font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
+          className="rounded-full bg-volt px-5 py-2.5 font-display text-xs font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
         >
           List your coin →
         </button>
@@ -267,16 +267,16 @@ export default function Home({
 
       {/* Tabs */}
       <div className="mx-auto mt-8 flex max-w-6xl flex-wrap items-center gap-3 px-6">
-        <div className="flex rounded border border-cream/15 p-1 text-sm">
+        <div className="flex rounded-full border border-cream/15 p-1 text-sm">
           <button
             onClick={() => setTab("all")}
-            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "all" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
+            className={`rounded-full px-4 py-1.5 font-display font-bold transition-colors ${tab === "all" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
           >
             All-Time
           </button>
           <button
             onClick={() => setTab("today")}
-            className={`rounded px-4 py-1.5 font-display font-bold transition-colors ${tab === "today" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
+            className={`rounded-full px-4 py-1.5 font-display font-bold transition-colors ${tab === "today" ? "bg-volt text-ink" : "text-bone hover:text-cream"}`}
           >
             Today
           </button>
@@ -321,11 +321,11 @@ export default function Home({
             value={claimQuery}
             onChange={(e) => setClaimQuery(e.target.value)}
             placeholder="Your project name or link"
-            className="w-full rounded border border-cream/20 bg-char px-4 py-3 text-sm text-cream outline-none focus:border-volt"
+            className="w-full rounded-full border border-cream/20 bg-char px-5 py-3 text-sm text-cream outline-none focus:border-volt"
           />
           <button
             type="submit"
-            className="shrink-0 rounded bg-volt px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
+            className="shrink-0 rounded-full bg-volt px-7 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink transition-transform hover:scale-[1.02]"
           >
             Claim rank
           </button>
@@ -350,7 +350,7 @@ export default function Home({
                 return (
                   <div
                     key={p.id}
-                    className={`group relative flex items-center justify-between gap-4 overflow-visible rounded-xl px-4 py-4 ${
+                    className={`group relative flex items-center justify-between gap-4 overflow-visible rounded-2xl px-5 py-5 ${
                       isLeader ? "bg-volt/10 shadow-sm" : "bg-char shadow-sm"
                     }`}
                   >
@@ -415,7 +415,7 @@ export default function Home({
         ) : (
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {recentActivity.slice(0, 6).map((a) => (
-              <div key={a.id} className="flex items-center justify-between rounded border border-cream/10 bg-char px-4 py-2.5 text-sm shadow-sm">
+              <div key={a.id} className="flex items-center justify-between rounded-xl border border-cream/10 bg-char px-4 py-2.5 text-sm shadow-sm">
                 <div className="min-w-0">
                   <span className="font-display font-semibold">{a.projectName}</span>
                   {a.tookLead ? (
