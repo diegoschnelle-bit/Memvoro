@@ -37,7 +37,7 @@ function Logo({ project, size = 56 }) {
         alt={`${project.name} logo`}
         width={size}
         height={size}
-        className="shrink-0 rounded-full bg-char object-cover"
+        className="shrink-0 rounded-full bg-char object-cover ring-1 ring-cream/10"
         style={{ width: size, height: size }}
         onError={(e) => {
           e.currentTarget.style.display = "none";
@@ -47,7 +47,7 @@ function Logo({ project, size = 56 }) {
   }
   return (
     <div
-      className="flex shrink-0 items-center justify-center rounded-full bg-char text-cream/80 font-mono font-medium"
+      className="flex shrink-0 items-center justify-center rounded-full bg-char text-cream/80 font-mono font-medium ring-1 ring-cream/10"
       style={{ width: size, height: size, fontSize: size * 0.32 }}
     >
       {initials(project.name)}
@@ -303,41 +303,47 @@ export default function Home({
         </div>
 
         {leader && (
-          <div className="relative w-full max-w-sm rounded-lg border border-gold/30 bg-char p-6 lg:w-80">
-            <div className="absolute -top-3 left-6 flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 text-xs font-medium text-gold">
-              <Crown className="h-3.5 w-3.5" filled />
-              Currently #1{tab === "today" ? " today" : ""}
-            </div>
-            <ProfileLink
-              project={leader}
-              className="group mt-3 flex items-center gap-4 rounded -m-1 p-1 transition-colors hover:bg-cream/[0.04]"
-            >
-              <Logo project={leader} size={56} />
-              <div>
-                <div className="text-xl font-bold group-hover:text-volt">
-                  {leader.name}
-                </div>
-                {leader.ticker && (
-                  <div className="font-mono text-xs text-bone">
-                    {leader.ticker}
-                  </div>
-                )}
+          <div className="relative w-full max-w-md lg:w-96">
+            <div
+              className="absolute -inset-4 rounded-full bg-gold/20 blur-3xl"
+              aria-hidden="true"
+            />
+            <div className="relative rounded-xl border border-gold/40 bg-gradient-to-b from-char to-ink p-8 shadow-[0_0_60px_-15px_rgba(255,201,74,0.35)]">
+              <div className="absolute -top-3 left-8 flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 text-xs font-medium text-gold">
+                <Crown className="h-3.5 w-3.5" filled />
+                Currently #1{tab === "today" ? " today" : ""}
               </div>
-            </ProfileLink>
-            <p className="mt-4 text-sm text-bone">{leader.description}</p>
-            <div className="mt-5 flex items-end justify-between">
-              <div className="font-mono text-2xl font-bold text-gold">
-                {money(leader[valueKey])}
-              </div>
-              <button
-                onClick={() => { setModalTarget(leader); setModalAboveTotal(leader[valueKey]); }}
-                className="text-xs font-medium text-bone underline decoration-cream/30 underline-offset-4 hover:text-volt"
+              <ProfileLink
+                project={leader}
+                className="group mt-4 flex items-center gap-5 rounded -m-1 p-1 transition-colors hover:bg-cream/[0.04]"
               >
-                Add funds — ${costToOvertake(leader[valueKey], leader, valueKey).toLocaleString("en-US")}
-              </button>
-            </div>
-            <div className="mt-2 text-xs text-bone">
-              {leader.clicks.toLocaleString("en-US")} clicks sent
+                <Logo project={leader} size={84} />
+                <div>
+                  <div className="text-3xl font-bold leading-tight group-hover:text-volt">
+                    {leader.name}
+                  </div>
+                  {leader.ticker && (
+                    <div className="font-mono text-sm text-bone">
+                      {leader.ticker}
+                    </div>
+                  )}
+                </div>
+              </ProfileLink>
+              <p className="mt-4 text-sm text-bone">{leader.description}</p>
+              <div className="mt-6 flex items-end justify-between">
+                <div className="font-mono text-4xl font-bold text-gold">
+                  {money(leader[valueKey])}
+                </div>
+                <button
+                  onClick={() => { setModalTarget(leader); setModalAboveTotal(leader[valueKey]); }}
+                  className="text-xs font-medium text-bone underline decoration-cream/30 underline-offset-4 hover:text-volt"
+                >
+                  Add funds — ${costToOvertake(leader[valueKey], leader, valueKey).toLocaleString("en-US")}
+                </button>
+              </div>
+              <div className="mt-2 text-xs text-bone">
+                {leader.clicks.toLocaleString("en-US")} clicks sent
+              </div>
             </div>
           </div>
         )}
@@ -407,10 +413,10 @@ export default function Home({
                           project={p}
                           className="flex items-center gap-4 rounded -m-1 p-1 transition-colors group-hover:bg-cream/[0.04]"
                         >
-                          <Logo project={p} size={44} />
+                          <Logo project={p} size={56} />
                           <div>
                             <div className="flex items-baseline gap-2">
-                              <span className="font-semibold group-hover:text-volt">
+                              <span className="text-base font-semibold group-hover:text-volt">
                                 {p.name}
                               </span>
                               {p.ticker && (
